@@ -6,6 +6,11 @@ var gulp = require('gulp');
 var server = require('gulp-server-livereload');
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
+var useref = require('gulp-useref');
+var gulpif = require('gulp-if');
+var uglify = require('gulp-uglify');
+var minifyCss = require('gulp-csso');
+
 
 //server
 
@@ -30,6 +35,15 @@ gulp.task('style', function () {
 
 gulp.task('watch', function () {
     gulp.watch('app/sass/**/*.sass', ['style']);
+});
+
+//build
+gulp.task('build', function () {
+    return gulp.src('app/*.html')
+        .pipe(useref())
+        .pipe(gulpif('*.js', uglify()))
+        .pipe(gulpif('*.css', minifyCss()))
+        .pipe(gulp.dest('public'));
 });
 
 gulp.task('default',['start','watch']);
